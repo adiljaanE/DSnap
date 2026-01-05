@@ -1,1 +1,1 @@
-pub mod displayServer;
+pub mod display_server;

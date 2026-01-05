@@ -1,3 +1,4 @@
+import path from 'node:path'
 import process from 'node:process'
 import { defineConfig } from 'vite'
 import createVitePlugins from './vite/plugins'
@@ -12,6 +13,11 @@ export default defineConfig(async () => ({
   //
   // 1. prevent Vite from obscuring rust errors
   clearScreen: false,
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, '/src'),
+    },
+  },
   // 2. tauri expects a fixed port, fail if that port is not available
   server: {
     port: 1420,

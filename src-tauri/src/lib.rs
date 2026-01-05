@@ -9,21 +9,26 @@ fn greet(name: &str) -> String {
 
 #[tauri::command]
 async fn capture_screenshot() -> Result<String, String> {
-    use  crate::screenshot::create_screenshot;
+    use crate::screenshot::create_screenshot;
+    use base64::engine::general_purpose::STANDARD;
+    use base64::Engine as _;
+    
     let screenshot = create_screenshot();
+    
+    // 直接获取图像数据并返回 base64
+    // 因为 Tauri v2 的资源访问权限比较复杂，使用 base64 更可靠
     match screenshot.capture_screen() {
         Ok(image_data) => {
             println!("Screenshot captured successfully, size: {} bytes", image_data.len());
-            // 处理图像数据...
+            let base64_image = STANDARD.encode(&image_data);
+            // 返回完整的 data URI
+            Ok(format!("data:image/png;base64,{}", base64_image))
         }
         Err(e) => {
             eprintln!("Failed to capture screenshot: {}", e);
+            Err(format!("截图失败: {}", e))
         }
     }
-    // Return base64 so frontend can display.
-    use base64::engine::general_purpose::STANDARD;
-    use base64::Engine as _;
-    Ok(STANDARD.encode("123"))
 }
 
 #[tauri::command]
@@ -34,10 +39,11 @@ async fn create_overlay_window(app: tauri::AppHandle) -> Result<(), String> {
         tauri::WebviewUrl::App("/#/overlay".into()),
     )
     // TODO: 添加窗口大小
-    .title("Overlay")
+    .title("dsnap-overlay")
     .decorations(false)
     .transparent(true)
     .always_on_top(true)
+    .fullscreen(true)
     .build()
     .map_err(|e| e.to_string())?;
     Ok(())

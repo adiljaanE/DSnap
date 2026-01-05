@@ -3,12 +3,16 @@ import { invoke } from '@tauri-apps/api/core'
 import { ref } from 'vue'
 
 const img = ref<string>('')
-async function capture() {
-  const b64 = await invoke<string>('capture_screenshot')
 
-  img.value = `data:image/png;base64,${b64}`
-  // 存储到 localStorage 以便 overlay 窗口使用
-  localStorage.setItem('currentScreenshot', img.value)
+async function capture() {
+  try {
+    const result = await invoke<string>('capture_screenshot')
+    // 直接使用返回的 base64 data URI
+    img.value = result
+  }
+  catch (error) {
+    console.error('截图失败:', error)
+  }
 }
 
 async function createOverlay() {

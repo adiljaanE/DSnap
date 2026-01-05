@@ -1,6 +1,6 @@
 <route lang="yaml">
-  redirect:
-    path: /home
+redirect:
+  path: /home
 </route>
 
 <script setup lang="ts">
