@@ -64,6 +64,8 @@ export class FabricCanvas {
       fabricImg.set({
         left: (width - fabricImg.width! * scale) / 2,
         top: (height - fabricImg.height! * scale) / 2,
+        originX: 'left',
+        originY: 'top',
         selectable: false, // 背景图片不可选中
       })
 
@@ -82,6 +84,8 @@ export class FabricCanvas {
       width: this.canvas.width,
       height: this.canvas.height,
       fill: 'rgba(0, 0, 0, 0.5)',
+      originX: 'left',
+      originY: 'top',
       selectable: false,
       evented: false,
     })

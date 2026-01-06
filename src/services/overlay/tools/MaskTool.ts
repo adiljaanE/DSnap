@@ -51,7 +51,7 @@ export class MaskTool extends Tools {
   }
 
   private handleMouseDown(e: fabric.TPointerEventInfo) {
-    if (!e.pointer)
+    if (!e.scenePoint)
       return
 
     // 如果点击的是选择框，让 Fabric.js 处理拖动/调整大小
@@ -60,16 +60,16 @@ export class MaskTool extends Tools {
 
     this.clearSelection()
     this.isDrawing = true
-    this.startX = e.pointer.x
-    this.startY = e.pointer.y
+    this.startX = e.scenePoint.x
+    this.startY = e.scenePoint.y
   }
 
   private handleMouseMove(e: fabric.TPointerEventInfo) {
-    if (!this.isDrawing || !e.pointer)
+    if (!this.isDrawing || !e.scenePoint)
       return
 
-    const currentX = e.pointer.x
-    const currentY = e.pointer.y
+    const currentX = e.scenePoint.x
+    const currentY = e.scenePoint.y
 
     const left = Math.min(this.startX, currentX)
     const top = Math.min(this.startY, currentY)
@@ -88,6 +88,8 @@ export class MaskTool extends Tools {
         fill: 'transparent',
         stroke: '#409EFF',
         strokeWidth: 2,
+        originX: 'left',
+        originY: 'top',
         selectable: false,
         evented: false,
       })
@@ -190,6 +192,8 @@ export class MaskTool extends Tools {
     const clipPath = new fabric.Path(pathData, {
       left: 0,
       top: 0,
+      originX: 'left',
+      originY: 'top',
       absolutePositioned: true,
       fillRule: 'evenodd',
     })

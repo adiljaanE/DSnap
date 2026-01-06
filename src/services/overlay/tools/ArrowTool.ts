@@ -54,7 +54,7 @@ export class ArrowTool extends Tools {
   }
 
   private handleMouseDown(e: fabric.TPointerEventInfo) {
-    if (!e.pointer)
+    if (!e.scenePoint)
       return
 
     if (e.target && this.arrows.includes(e.target as fabric.Group))
@@ -64,16 +64,16 @@ export class ArrowTool extends Tools {
       return
 
     this.isDrawing = true
-    this.startX = e.pointer.x
-    this.startY = e.pointer.y
+    this.startX = e.scenePoint.x
+    this.startY = e.scenePoint.y
   }
 
   private handleMouseMove(e: fabric.TPointerEventInfo) {
-    if (!this.isDrawing || !e.pointer)
+    if (!this.isDrawing || !e.scenePoint)
       return
 
-    const endX = e.pointer.x
-    const endY = e.pointer.y
+    const endX = e.scenePoint.x
+    const endY = e.scenePoint.y
 
     if (this.currentArrow) {
       this.canvas.remove(this.currentArrow)

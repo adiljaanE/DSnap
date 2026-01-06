@@ -60,7 +60,7 @@ export class RectTool extends Tools {
   }
 
   private handleMouseDown(e: fabric.TPointerEventInfo) {
-    if (!e.pointer)
+    if (!e.scenePoint)
       return
 
     if (e.target && this.rects.includes(e.target as fabric.Rect))
@@ -70,16 +70,16 @@ export class RectTool extends Tools {
       return
 
     this.isDrawing = true
-    this.startX = e.pointer.x
-    this.startY = e.pointer.y
+    this.startX = e.scenePoint.x
+    this.startY = e.scenePoint.y
   }
 
   private handleMouseMove(e: fabric.TPointerEventInfo) {
-    if (!this.isDrawing || !e.pointer)
+    if (!this.isDrawing || !e.scenePoint)
       return
 
-    const currentX = e.pointer.x
-    const currentY = e.pointer.y
+    const currentX = e.scenePoint.x
+    const currentY = e.scenePoint.y
 
     const left = Math.min(this.startX, currentX)
     const top = Math.min(this.startY, currentY)
@@ -100,6 +100,8 @@ export class RectTool extends Tools {
         strokeWidth: this.config.strokeWidth,
         rx: this.config.rx,
         ry: this.config.ry,
+        originX: 'left',
+        originY: 'top',
         selectable: false,
         evented: false,
       })
