@@ -1,5 +1,6 @@
 pub mod screenshot;
 pub mod utils;
+use tauri::Manager;
 
 // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
 #[tauri::command]
@@ -33,6 +34,15 @@ async fn capture_screenshot() -> Result<String, String> {
 
 #[tauri::command]
 async fn create_overlay_window(app: tauri::AppHandle) -> Result<(), String> {
+    // 如果已存在 overlay 窗口，则聚焦并返回，避免重复创建导致多个 webkitwebprocess
+    if let Some(win) = app.get_webview_window("overlay") {
+        let res: Result<(), tauri::Error> = win.set_focus();
+        if let Err(e) = res {
+            eprintln!("Failed to focus overlay window: {}", e);
+        }
+        return Ok(());
+    }
+
     let _window = tauri::webview::WebviewWindowBuilder::new(
         &app,
         "overlay",

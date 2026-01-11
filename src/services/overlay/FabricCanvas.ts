@@ -2,16 +2,16 @@ import type { Tools } from './tools/Tools'
 import * as fabric from 'fabric'
 import { KeyboardManager } from './KeyboardManager'
 import { ArrowTool } from './tools/ArrowTool'
-import { MaskTool } from './tools/MaskTool'
+import { CropTool } from './tools/CropTool'
 import { RectTool } from './tools/RectTool'
 
 export class FabricCanvas {
   canvas: fabric.Canvas
   activeTools: any = null
-  maskTool: MaskTool
+  cropTool: CropTool
   rectTool: RectTool
   arrowTool: ArrowTool
-  maskOverlay: fabric.Rect | null = null
+  maskGroup: fabric.Group | null = null
   keyboardManager: KeyboardManager
 
   constructor(canvas: HTMLCanvasElement) {
@@ -24,11 +24,11 @@ export class FabricCanvas {
       height,
     })
     this.keyboardManager = new KeyboardManager()
-    this.maskTool = new MaskTool(this)
+    this.cropTool = new CropTool(this)
     this.rectTool = new RectTool(this)
     this.arrowTool = new ArrowTool(this)
 
-    this.registerToolShortcut(this.maskTool)
+    this.registerToolShortcut(this.cropTool)
     this.registerToolShortcut(this.rectTool)
     this.registerToolShortcut(this.arrowTool)
 
@@ -73,12 +73,12 @@ export class FabricCanvas {
       this.canvas.renderAll()
 
       this.createMaskOverlay()
-      this.maskTool.activate()
+      this.cropTool.activate()
     })
   }
 
   createMaskOverlay() {
-    this.maskOverlay = new fabric.Rect({
+    const maskRect = new fabric.Rect({
       left: 0,
       top: 0,
       width: this.canvas.width,
@@ -86,10 +86,50 @@ export class FabricCanvas {
       fill: 'rgba(0, 0, 0, 0.5)',
       originX: 'left',
       originY: 'top',
-      selectable: false,
-      evented: false,
     })
-    this.canvas.add(this.maskOverlay)
+
+    this.maskGroup = new fabric.Group([maskRect], {
+      left: 0,
+      top: 0,
+      originX: 'left',
+      originY: 'top',
+      selectable: false,
+      evented: true,
+    })
+
+    this.canvas.add(this.maskGroup)
     this.canvas.renderAll()
+  }
+
+  dispose(): void {
+    // 停止键盘监听
+    try {
+      this.keyboardManager.stopListening()
+    }
+    catch (e) {
+      console.error('Error stopping keyboard manager', e)
+    }
+
+    // 取消激活当前工具
+    if (this.activeTools && typeof (this.activeTools.deactivate) === 'function') {
+      try {
+        this.activeTools.deactivate()
+      }
+      catch (e) {
+        console.error('Error deactivating tool', e)
+      }
+      this.activeTools = null
+    }
+
+    // 清理 fabric 画布资源
+    try {
+      this.canvas.dispose()
+    }
+    catch (e) {
+      console.error('Error disposing fabric canvas', e)
+    }
+
+    // 删除 mask 组引用
+    this.maskGroup = null
   }
 }
