@@ -3,7 +3,6 @@ import * as fabric from 'fabric'
 import { KeyboardManager } from './KeyboardManager'
 import { ArrowTool } from './tools/ArrowTool'
 import { CropTool } from './tools/CropTool'
-import { MagnifierTool } from './tools/MagnifierTool'
 import { RectTool } from './tools/RectTool'
 
 export class FabricCanvas {
@@ -12,7 +11,6 @@ export class FabricCanvas {
   cropTool: CropTool
   rectTool: RectTool
   arrowTool: ArrowTool
-  magnifierTool: MagnifierTool
   maskGroup: fabric.Group | null = null
   keyboardManager: KeyboardManager
   backgroundImageUrl: string | null = null
@@ -30,12 +28,10 @@ export class FabricCanvas {
     this.cropTool = new CropTool(this)
     this.rectTool = new RectTool(this)
     this.arrowTool = new ArrowTool(this)
-    this.magnifierTool = new MagnifierTool(this)
 
     this.registerToolShortcut(this.cropTool)
     this.registerToolShortcut(this.rectTool)
     this.registerToolShortcut(this.arrowTool)
-    this.registerToolShortcut(this.magnifierTool)
 
     this.keyboardManager.startListening()
   }
