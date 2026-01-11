@@ -3,6 +3,7 @@ import * as fabric from 'fabric'
 import { KeyboardManager } from './KeyboardManager'
 import { ArrowTool } from './tools/ArrowTool'
 import { CropTool } from './tools/CropTool'
+import { MagnifierTool } from './tools/MagnifierTool'
 import { RectTool } from './tools/RectTool'
 
 export class FabricCanvas {
@@ -11,8 +12,10 @@ export class FabricCanvas {
   cropTool: CropTool
   rectTool: RectTool
   arrowTool: ArrowTool
+  magnifierTool: MagnifierTool
   maskGroup: fabric.Group | null = null
   keyboardManager: KeyboardManager
+  backgroundImageUrl: string | null = null
 
   constructor(canvas: HTMLCanvasElement) {
     const height = window.innerHeight
@@ -27,10 +30,12 @@ export class FabricCanvas {
     this.cropTool = new CropTool(this)
     this.rectTool = new RectTool(this)
     this.arrowTool = new ArrowTool(this)
+    this.magnifierTool = new MagnifierTool(this)
 
     this.registerToolShortcut(this.cropTool)
     this.registerToolShortcut(this.rectTool)
     this.registerToolShortcut(this.arrowTool)
+    this.registerToolShortcut(this.magnifierTool)
 
     this.keyboardManager.startListening()
   }
@@ -56,6 +61,9 @@ export class FabricCanvas {
   }
 
   loadBackgroundImage(imgUrl: string) {
+    // 保存背景图 URL
+    this.backgroundImageUrl = imgUrl
+
     const height = window.innerHeight
     const width = window.innerWidth
     fabric.FabricImage.fromURL(imgUrl).then((fabricImg) => {
