@@ -16,6 +16,10 @@ export abstract class Tools {
    * 激活工具 - 最终调用此方法
    */
   activate(): void {
+    // 如果工具已经激活，直接返回，避免重复注册事件监听器
+    if (this.isActive) {
+      return
+    }
     this.fabricCanvas.activeTools = this
     this.isActive = true
     this.onActivate()

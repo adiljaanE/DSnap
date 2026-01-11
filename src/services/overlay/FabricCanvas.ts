@@ -45,6 +45,10 @@ export class FabricCanvas {
   }
 
   private switchToTool(tool: Tools): void {
+    // 如果当前工具已经是目标工具，直接返回，避免重复激活
+    if (this.activeTools === tool) {
+      return
+    }
     if (this.activeTools && this.activeTools !== tool) {
       this.activeTools.deactivate()
     }

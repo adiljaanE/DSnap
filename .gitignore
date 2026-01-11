@@ -27,3 +27,4 @@ dist-ssr
 .stylelintcache
 # Rust
 target/
+.github/copilot-instructions.md
